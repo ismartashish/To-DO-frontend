@@ -1,0 +1,190 @@
+.todo-form {
+  margin-bottom: 30px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.task-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 14px 18px;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  outline: none;
+  background: var(--card-bg);
+  color: var(--text-primary);
+}
+
+.task-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 4px var(--button-shadow);
+  background: rgba(0, 212, 255, 0.02);
+}
+
+.task-input::placeholder {
+  color: var(--text-muted);
+}
+
+.deadline-input {
+  padding: 14px 12px;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  min-width: 140px;
+}
+
+.deadline-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 4px var(--button-shadow);
+}
+
+.priority-select {
+  padding: 14px 12px;
+  border: 2px solid var(--input-border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  outline: none;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.priority-select:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 4px var(--button-shadow);
+}
+
+.priority-select option {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  padding: 10px;
+}
+
+.add-btn {
+  padding: 14px 28px;
+  background: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px var(--button-shadow);
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px var(--button-shadow);
+}
+
+.add-btn:active {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    gap: 10px;
+  }
+
+  .task-input {
+    min-width: 120px;
+  }
+
+  .deadline-input {
+    min-width: 120px;
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+
+  .priority-select {
+    min-width: 90px;
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+
+  .add-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .task-input,
+  .deadline-input,
+  .priority-select,
+  .add-btn {
+    width: 100%;
+  }
+}
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.todo-info {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* spacing between task, deadline, priority */
+}
+
+.todo-actions {
+  display: flex;
+  gap: 10px; /* spacing between edit & delete buttons */
+}
+
+.todo-task {
+  font-weight: 500;
+}
+
+.todo-deadline {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.todo-priority.low {
+  color: green;
+}
+.todo-priority.medium {
+  color: orange;
+}
+.todo-priority.high {
+  color: red;
+}
+
+.todo-checkbox {
+  width: 18px;
+  height: 18px;
+}
+
+.edit-btn, .delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}

@@ -1,0 +1,179 @@
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--todo-item-bg);
+  border: 2px solid var(--todo-item-border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.todo-item:hover {
+  background: var(--todo-item-hover-bg);
+  border-color: var(--input-focus);
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+}
+
+.todo-item.completed-item {
+  opacity: 0.7;
+}
+
+.todo-checkbox {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: var(--input-focus);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.todo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 16px;
+  color: var(--text-primary);
+  word-break: break-word;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.todo-text.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.priority-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.priority-high {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.priority-medium {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.priority-low {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.deadline-badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.deadline-overdue {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.deadline-today {
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.deadline-tomorrow {
+  background: rgba(102, 175, 233, 0.15);
+  color: #66aff9;
+  border: 1px solid rgba(102, 175, 233, 0.3);
+}
+
+.deadline-upcoming {
+  background: rgba(156, 39, 176, 0.15);
+  color: #9c27b0;
+  border: 1px solid rgba(156, 39, 176, 0.3);
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #ff3838 100%);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .todo-item {
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .todo-text {
+    font-size: 14px;
+    flex: 1 1 100%;
+  }
+
+  .todo-meta {
+    flex: 1 1 100%;
+    gap: 6px;
+  }
+
+  .priority-badge,
+  .deadline-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .delete-btn {
+    flex: 0 0 auto;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

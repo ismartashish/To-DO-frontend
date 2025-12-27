@@ -1,21 +1,24 @@
-import React from 'react';
-import TodoItem from './TodoItem';
+import React from "react";
+import TodoItem from "./TodoItem";
 
-function TodoList({ todos, onUpdate, onDelete }) {
-  if (!todos.length) {
-    return <p>No tasks yet. Add one!</p>;
+function TodoList({ todos, onToggle, onEdit, onDelete }) {
+  if (!todos || todos.length === 0) {
+    return <p className="empty-text">No tasks yet ✨</p>;
   }
+
   return (
-    <>
+    <div className="todo-list">
       {todos.map((todo) => (
         <TodoItem
           key={todo._id}
           todo={todo}
-          onUpdate={onUpdate}
+          onToggle={onToggle}
+          onEdit={onEdit}
           onDelete={onDelete}
         />
       ))}
-    </>
+    </div>
   );
 }
+
 export default TodoList;

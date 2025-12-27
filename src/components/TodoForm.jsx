@@ -1,166 +1,230 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import ThemeToggle from './ThemeToggle';
-import './TodoForm.css';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
+import api from "../services/api";
+import TodoList from "./TodoList";
+import "./TodoForm.css";
+
+/* ================= DAILY FOCUS ================= */
+function DailyFocus({ todos }) {
+  const focusTodos = todos.filter((t) => t.isFocus);
+
+  if (!focusTodos.length) return null;
+
+  return (
+    <div className="focus-box">
+      <h3>🎯 Today’s Focus</h3>
+      {focusTodos.map((t) => (
+        <p key={t._id}>{t.task}</p>
+      ))}
+    </div>
+  );
+}
+
+/* ================= PROGRESS RING ================= */
+function ProgressRing({ percent }) {
+  const radius = 50;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  return (
+    <div className="progress-ring">
+      <svg width="120" height="120">
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          className="ring-bg"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          className="ring-progress"
+          style={{ strokeDashoffset: offset }}
+        />
+      </svg>
+      <span>{percent}%</span>
+    </div>
+  );
+}
 
 function TodoForm() {
   const { user } = useAuth();
+
   const [todos, setTodos] = useState([]);
-  const [title, setTitle] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [priority, setPriority] = useState('medium');
-  const [error, setError] = useState('');
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [editTodoId, setEditTodoId] = useState(null);
 
+  /* ================= FETCH ================= */
   useEffect(() => {
     if (!user) return;
+
     const fetchTodos = async () => {
       try {
-        const response = await axios.get('https://ismartashish.github.io/To-DO-backend/api/todos', {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setTodos(response.data);
+        const res = await api.get("/todo");
+        setTodos(res.data || []);
       } catch (err) {
-        console.error('Error fetching todos:', err);
-        setError(err.response?.data?.message || 'Failed to fetch todos');
+        console.error(err);
+        setError("Failed to fetch todos");
       }
     };
+
     fetchTodos();
   }, [user]);
 
+  /* ================= ADD / UPDATE ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
+    setError("");
 
     try {
-      const payload = { task: title, deadline: dueDate, priority };
+      const payload = {
+        task: title,
+        deadline: dueDate || undefined,
+        priority,
+      };
 
-      let response;
+      let res;
       if (editTodoId) {
-        response = await axios.put(
-          `https://ismartashish.github.io/To-DO-backend/api/todos/${editTodoId}`,
-          payload,
-          { headers: { Authorization: `Bearer ${user.token}` } }
+        res = await api.put(`/todo/${editTodoId}`, payload);
+        setTodos((prev) =>
+          prev.map((t) => (t._id === editTodoId ? res.data : t))
         );
         setEditTodoId(null);
-        setTodos(todos.map((t) => (t._id === editTodoId ? response.data : t)));
       } else {
-        response = await axios.post('https://ismartashish.github.io/To-DO-backend/api/todos', payload, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setTodos([response.data, ...todos]);
+        res = await api.post("/todo", payload);
+        setTodos((prev) => [res.data, ...prev]);
       }
 
-      setTitle('');
-      setDueDate('');
-      setPriority('medium');
+      setTitle("");
+      setDueDate("");
+      setPriority("medium");
     } catch (err) {
-      console.error('Error adding/updating todo:', err);
-      setError(err.response?.data?.message || 'Failed to add/update todo');
+      console.error(err);
+      setError("Failed to save todo");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://ismartashish.github.io/To-DO-backend/api/todos/${id}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setTodos(todos.filter((t) => t._id !== id));
-    } catch (err) {
-      console.error('Error deleting todo:', err);
-      setError(err.response?.data?.message || 'Failed to delete todo');
-    }
-  };
-
+  /* ================= TOGGLE ================= */
   const handleToggle = async (todo) => {
     try {
-      const response = await axios.put(
-        `https://ismartashish.github.io/To-DO-backend/api/todos/${todo._id}`,
-        { completed: !todo.completed },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+      const res = await api.put(`/todo/${todo._id}`, {
+        completed: !todo.completed,
+      });
+
+      setTodos((prev) =>
+        prev.map((t) => (t._id === todo._id ? res.data : t))
       );
-      setTodos(todos.map((t) => (t._id === todo._id ? response.data : t)));
-    } catch (err) {
-      console.error('Error toggling todo:', err);
-      setError(err.response?.data?.message || 'Failed to update todo');
+    } catch {
+      setError("Failed to update todo");
     }
   };
 
+  /* ================= DELETE ================= */
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/todo/${id}`);
+      setTodos((prev) => prev.filter((t) => t._id !== id));
+    } catch {
+      setError("Failed to delete todo");
+    }
+  };
+
+  /* ================= EDIT ================= */
   const handleEdit = (todo) => {
     setTitle(todo.task);
-    setDueDate(todo.deadline ? todo.deadline.split('T')[0] : '');
-    setPriority(todo.priority || 'medium');
+    setDueDate(todo.deadline?.split("T")[0] || "");
+    setPriority(todo.priority || "medium");
     setEditTodoId(todo._id);
   };
+
+  /* ================= STATS ================= */
+  const doneCount = todos.filter((t) => t.completed).length;
+  const percent =
+    todos.length === 0
+      ? 0
+      : Math.round((doneCount / todos.length) * 100);
 
   return (
     <div className="todo-container">
       <ThemeToggle />
 
-      <h2 className="todo-header">Your Todos</h2>
+      {/* HEADER */}
+      <div className="todos-header">
+        <div>
+          <h2>Your Todos</h2>
+          <p className="todos-subtitle">Plan smart. Execute better.</p>
+        </div>
 
-      {error && <div className="error-message">{error}</div>}
+        <div className="todos-stats">
+          <div className="stat-box">
+            <span>Total</span>
+            <strong>{todos.length}</strong>
+          </div>
+          <div className="stat-box done">
+            <span>Done</span>
+            <strong>{doneCount}</strong>
+          </div>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit} className="todo-form">
+      {/* PROGRESS + FOCUS */}
+      <div className="focus-progress-row">
+        <ProgressRing percent={percent} />
+        <DailyFocus todos={todos} />
+      </div>
+
+      {error && <p className="error-message">{error}</p>}
+
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="todo-form premium-form">
         <input
-          type="text"
-          placeholder="Enter task..."
+          className="todo-input big-input"
+          placeholder="What needs to be done?"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="todo-input"
         />
-        <input
-          type="date"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-          className="todo-input"
-        />
-        <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          className="todo-input"
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <button type="submit" className="todo-btn" disabled={loading}>
-          {loading ? (editTodoId ? 'Updating...' : 'Adding...') : editTodoId ? 'Update Todo' : 'Add Todo'}
+
+        <div className="row-inputs">
+          <input
+            className="todo-input"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+
+          <select
+            className="todo-input"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <button className="primary-btn" disabled={loading}>
+          {loading ? "Saving..." : editTodoId ? "Update Todo" : "Add Todo"}
         </button>
       </form>
 
-      <ul className="todo-list">
-        {todos.map((todo) => (
-          <li key={todo._id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-            <div className="todo-info">
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => handleToggle(todo)}
-              />
-              <span className="todo-task">{todo.task}</span>
-              {todo.deadline && (
-                <span className="todo-deadline">{new Date(todo.deadline).toLocaleDateString()}</span>
-              )}
-              <span className={`todo-priority ${todo.priority}`}>{todo.priority}</span>
-            </div>
-            <div className="todo-actions">
-              <button onClick={() => handleEdit(todo)} className="edit-btn">
-                ✏️
-              </button>
-              <button onClick={() => handleDelete(todo._id)} className="delete-btn">
-                ❌
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* LIST */}
+      <TodoList
+        todos={todos}
+        onToggle={handleToggle}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

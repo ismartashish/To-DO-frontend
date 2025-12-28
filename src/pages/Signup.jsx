@@ -43,7 +43,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://to-do-backend-3-jp8q.onrender.com/api/auth/signup', {
+      const response = await axios.post('https://to-do-backend-5-rxi2.onrender.com/api/auth/signup', {
         name: formData.name,
         email: formData.email,
         password: formData.password,

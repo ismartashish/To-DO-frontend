@@ -43,7 +43,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://portfoliobackend-psah.onrender.com/api/auth/signup', {
+      const response = await axios.post('https://to-do-backend-6-p55q.onrender.com/api/auth/signup', {
         name: formData.name,
         email: formData.email,
         password: formData.password,

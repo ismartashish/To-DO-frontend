@@ -2,7 +2,7 @@
   "name": "todo-frontend",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://ismartashish.github.io/New-Portfolio-Frontend",
+  "homepage": "https://to-do-frontend-roan-phi.vercel.app",
 
   "scripts": {
     "dev": "vite",
